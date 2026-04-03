@@ -1,0 +1,4 @@
+services:
+  mongodb:
+   build: ./MONGODB
+   image: shaikaliasif/mongodb:1.0.0
