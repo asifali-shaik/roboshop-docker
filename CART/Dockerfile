@@ -1,7 +1,7 @@
 FROM node:20
 WORKDIR /app
 COPY package.json .
-COPY *.js .
+COPY server.js .
 ENV REDIS_HOST="redi" \
     CATALOGUE_HOST="catalogue" \
     CATALOGUE_PORT="8080"
