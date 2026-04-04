@@ -1,4 +1,4 @@
-import instana, { currentSpan } from '@instana/collector';
+const instana = require('@instana/collector');
 // init tracing
 // MUST be done before loading anything else!
 instana({
@@ -7,17 +7,17 @@ instana({
     }
 });
 
-import { createClient } from 'redis';
-import request from 'request';
-import { urlencoded, json } from 'body-parser';
-import express from 'express';
-import pino from 'pino';
-import expPino from 'express-pino-logger';
+const redis = require('redis');
+const request = require('request');
+const bodyParser = require('body-parser');
+const express = require('express');
+const pino = require('pino');
+const expPino = require('express-pino-logger');
 // Prometheus
-import { Registry as _Registry, Counter } from 'prom-client';
-const Registry = _Registry;
+const promClient = require('prom-client');
+const Registry = promClient.Registry;
 const register = new Registry();
-const counter = new Counter({
+const counter = new promClient.Counter({
     name: 'items_added',
     help: 'running count of items added to cart',
     registers: [register]
@@ -57,14 +57,14 @@ app.use((req, res, next) => {
         "us-east1",
         "us-west1"
     ];
-    let span = currentSpan();
+    let span = instana.currentSpan();
     span.annotate('custom.sdk.tags.datacenter', dcs[Math.floor(Math.random() * dcs.length)]);
 
     next();
 });
 
-app.use(urlencoded({ extended: true }));
-app.use(json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
 app.get('/health', (req, res) => {
     var stat = {
@@ -388,7 +388,7 @@ function saveCart(id, cart) {
 }
 
 // connect to Redis
-var redisClient = createClient({
+var redisClient = redis.createClient({
     host: redisHost
 });
 
@@ -405,4 +405,5 @@ const port = process.env.CART_SERVER_PORT || '8080';
 app.listen(port, () => {
     logger.info('Started on port', port);
 });
+
 
