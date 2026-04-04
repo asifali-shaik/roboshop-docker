@@ -1,4 +1,4 @@
-const instana = require('@instana/collector');
+import instana, { currentSpan } from '@instana/collector';
 // init tracing
 // MUST be done before loading anything else!
 instana({
@@ -7,12 +7,12 @@ instana({
     }
 });
 
-const { MongoClient, ObjectId } = require('mongodb');
-const { createClient } = require('redis');
-const bodyParser = require('body-parser');
-const express = require('express');
-const pino = require('pino');
-const expPino = require('express-pino-logger');
+import { MongoClient, ObjectId } from 'mongodb';
+import { createClient } from 'redis';
+import { urlencoded, json } from 'body-parser';
+import express from 'express';
+import pino from 'pino';
+import expPino from 'express-pino-logger';
 
 // MongoDB
 let db;
@@ -47,14 +47,14 @@ app.use((req, res, next) => {
         "us-east1",
         "us-west1"
     ];
-    let span = instana.currentSpan();
+    let span = currentSpan();
     span.annotate('custom.sdk.tags.datacenter', dcs[Math.floor(Math.random() * dcs.length)]);
 
     next();
 });
 
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
+app.use(urlencoded({ extended: true }));
+app.use(json());
 
 app.get('/health', (req, res) => {
     const stat = {
