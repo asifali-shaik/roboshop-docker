@@ -1,9 +1,16 @@
-FROM node:20
-# workdir creates the directory and moves to that directory
-WORKDIR /app
+FROM node:20.20.2-alpine3.23 AS builder 
+WORKDIR /app 
 COPY package.json .
-COPY  *.js .
-RUN npm install
-ENV MONGO="true" \
-    MONGO_URL="mongodb://mongodb:27017/catalogue"
-CMD ["node" , "server.js"]
+COPY *.js .
+RUN npm install 
+
+
+FROM node:20.20.2-alpine3.23
+WORKDIR /app
+EXPOSE 8080
+COPY --from=builder /app /app
+RUN addgroup -s roboshop && adduser -s roboshop -G roboshop
+RUN chowm -R roboshop:roboshop /app
+USER roboshop 
+CMD [ "node" ]
+ENTRYPOINT [ "server.js" ]
