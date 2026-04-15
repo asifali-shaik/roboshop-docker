@@ -9,7 +9,7 @@ FROM eclipse-temurin:17-jre-alpine
 EXPOSE 8080
 WORKDIR /app 
 RUN addgroup -S roboshop && adduser -S roboshop -G roboshop && \
-    chowm -R roboshop:roboshop /app 
+    chown -R roboshop:roboshop /app 
 COPY --from=builder /app/shpping.jar .
 USER roboshop 
 ENTRYPOINT [ "java","-jar","shipping.jar" ]
