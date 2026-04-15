@@ -10,7 +10,7 @@ WORKDIR /app
 EXPOSE 8080
 COPY --from=builder /app /app
 RUN addgroup -S roboshop && adduser -S roboshop -G roboshop
-RUN -c chowm -R roboshop:roboshop /app
+RUN  chown -R roboshop:roboshop /app
 USER roboshop 
 CMD [ "node" ]
 ENTRYPOINT [ "server.js" ]
